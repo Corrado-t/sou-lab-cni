@@ -1,0 +1,12 @@
+- name: Configure soufe and soube nodes
+  hosts: all
+  become: yes
+  roles:
+    - sou_podman
+
+- name: Configure HaProxy on soufe
+  hosts: soufe1
+  become: yes
+  roles: 
+    - sou_haProxy
+    

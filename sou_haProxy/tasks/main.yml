@@ -1,0 +1,13 @@
+- name: Generate haproxy.cfg from template
+  template:
+    src: ../templates/haproxy.cfg.j2  
+    dest: /tmp/haproxy.cfg  
+- name: Install HAProxy via Podman
+  containers.podman.podman_container:
+    name: haproxy
+    image: docker.io/library/haproxy:latest
+    state: started
+    ports:
+      - "8443:8443"
+    volumes:
+      - /tmp/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:Z  # Mount the config file

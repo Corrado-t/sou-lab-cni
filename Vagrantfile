@@ -26,12 +26,17 @@ end
 
 # Vagrant configuration
 Vagrant.configure("2") do |config|
-  config.vm.box = "centos/7"
+  config.vm.box = "generic/oracle8"
 
   # Create multiple frontEnd VMs based on nodeNumber
   (1..feNodeNumber).each do |i|
     config.vm.define "soufe#{i}" do |node|
       node.vm.network "private_network", ip: "192.168.56.#{i + 1}"
+      config.vm.provision "ansible" do |ansible|
+        ansible.playbook = "./deploy.yml"
+        ansible.compatibility_mode = "2.0"
+        ansible.become = true
+      end
       node.vm.provider "virtualbox" do |vb|
         vb.memory = "512"
         vb.cpus = 1
@@ -44,6 +49,11 @@ Vagrant.configure("2") do |config|
   (1..beNodeNumber).each do |i|
     config.vm.define "soube#{i}" do |node|
       node.vm.network "private_network", ip: "192.168.56.#{i + 65}"
+      config.vm.provision "ansible" do |ansible|
+        ansible.playbook = "./deploy.yml"
+        ansible.compatibility_mode = "2.0"
+        ansible.become = true
+      end
       node.vm.provider "virtualbox" do |vb|
         vb.memory = "512"
         vb.cpus = 1

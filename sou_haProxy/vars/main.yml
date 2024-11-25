@@ -1,0 +1,6 @@
+haproxy_cert: "/path/to/cert.pem"
+grafana_host: "grafana.local"
+prometheus_host: "prometheus.local"
+vault_ip: "192.168.50.111"
+grafana_ip: "192.168.56.66"
+prometheus_ip: "192.168.56.66"

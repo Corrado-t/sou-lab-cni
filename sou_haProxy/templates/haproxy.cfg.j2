@@ -1,0 +1,33 @@
+global
+    maxconn 20000
+    ulimit-n  16384
+    log 127.0.0.1 local0
+    daemon
+
+frontend fe_http
+    bind *:8080
+    mode http
+    log global
+    option httplog
+    option dontlognull
+    option nolinger
+    maxconn 8000
+    timeout client 30s
+
+    acl is_grafana hdr(host) -i grafana.local
+    use_backend grafana if is_grafana
+
+    acl is_prometheus hdr(host) -i prometheus.local
+    use_backend prometheus if is_prometheus
+
+backend grafana
+    mode http
+    balance roundrobin
+    option httpchk
+    server grafana1 {{ grafana_ip }}:3000 check
+
+backend prometheus
+    mode http
+    balance roundrobin
+    option httpchk
+    server prometheus1 {{ prometheus_ip }}:9090 check

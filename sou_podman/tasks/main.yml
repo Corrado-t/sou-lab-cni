@@ -1,0 +1,8 @@
+# Install PodMan
+- name: Install Podman
+  become: yes
+  yum:
+    name: podman
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/libexec/platform-python
