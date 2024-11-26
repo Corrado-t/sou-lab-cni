@@ -1,0 +1,40 @@
+
+
+- name: Create data dir
+  ansible.builtin.file:
+    path: /containers_vols
+    state: directory
+    mode: '0755'
+ 
+- name: Create Prometheus data dir
+  ansible.builtin.file:
+    path: /containers_vols/prometheus/data
+    state: directory
+    owner: "{{ prometheus_id }}"
+    group: "{{ prometheus_id }}"
+    mode: '0755'
+
+- name: Create Prometheus config dir
+  ansible.builtin.file:
+    path: /containers_vols/prometheus/config
+    state: directory
+    owner: "{{ prometheus_id }}"
+    group: "{{ prometheus_id }}"
+    mode: '0755'
+
+- name: Generate prometheus.yml from template
+  template:
+    src: ../templates/prometheus.yml.j2  
+    dest: /containers_vols/prometheus/config/prometheus.yml      
+ 
+- name: Create Prometheus Container
+  containers.podman.podman_container:
+    name: prometheus
+    image: prom/prometheus
+    volume:
+      - /containers_vols/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml:z
+      - /containers_vols/prometheus/data:/prometheus:z
+    expose:
+      - 9090
+    ports:
+      - "9090:9090"

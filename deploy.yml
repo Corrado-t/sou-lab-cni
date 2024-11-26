@@ -9,4 +9,15 @@
   become: yes
   roles: 
     - sou_haProxy
-    
+
+- name: Configure Prometeus on soube
+  hosts: soube1
+  become: yes
+  roles:
+    - sou_prometheus
+
+- name: Configure Grafana on soube
+  hosts: soube1
+  become: yes
+  roles:
+    - sou_grafana

@@ -1,11 +1,19 @@
 global
     maxconn 20000
     ulimit-n  16384
-    log 127.0.0.1 local0
+    log 127.0.0.1 format raw local0 debug
     daemon
 
+frontend stats
+    mode http
+    bind *:8444
+    stats enable
+    stats uri /stats
+    stats refresh 10s
+    stats admin if TRUE
+
 frontend fe_http
-    bind *:8080
+    bind *:8404
     mode http
     log global
     option httplog
@@ -22,12 +30,18 @@ frontend fe_http
 
 backend grafana
     mode http
+    timeout client 30s       # Timeout for client-side
+    timeout connect 5s       # Timeout for establishing connection
+    timeout server 30s       # Timeout for server-side
     balance roundrobin
     option httpchk
     server grafana1 {{ grafana_ip }}:3000 check
 
 backend prometheus
     mode http
+    timeout client 30s       # Timeout for client-side
+    timeout connect 5s       # Timeout for establishing connection
+    timeout server 30s       # Timeout for server-side
     balance roundrobin
     option httpchk
     server prometheus1 {{ prometheus_ip }}:9090 check

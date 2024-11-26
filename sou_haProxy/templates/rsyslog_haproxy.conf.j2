@@ -1,0 +1,7 @@
+# Listen for UDP logs from HAProxy
+$ModLoad imudp
+$UDPServerRun 514
+$UDPServerAddress 127.0.0.1
+
+# Log HAProxy messages from local0 to a dedicated file
+local0.* /var/log/haproxy.log
