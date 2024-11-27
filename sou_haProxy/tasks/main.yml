@@ -1,20 +1,7 @@
-- name: Deploy rsyslog configuration for HAProxy
-  ansible.builtin.template:
-    src: rsyslog_haproxy.conf.j2
-    dest: /tmp/haproxy.conf
-    mode: '0644'
-
-- name: Ensure HAProxy log file exists
-  ansible.builtin.file:
-    path: /var/log/haproxy.log
-    state: touch
-    mode: '0777'
-
 - name: Generate haproxy.cfg from template
   template:
     src: ../templates/haproxy.cfg.j2  
     dest: /tmp/haproxy.cfg  
-
 
 - name: Copy SSL cert
   ansible.builtin.copy:
@@ -26,7 +13,7 @@
 - name: Install HAProxy via Podman
   containers.podman.podman_container:
     name: haproxy
-    image: docker.io/library/haproxy:latest
+    image: docker.io/library/haproxy:2.3
     state: started
     ports:
       - "8404:8404"

@@ -27,7 +27,7 @@ end
 # Vagrant configuration
 Vagrant.configure("2") do |config|
   config.vm.box = "generic/oracle8"
-
+  
   # Create multiple frontEnd VMs based on nodeNumber
   (1..feNodeNumber).each do |i|
     config.vm.define "soufe#{i}" do |node|

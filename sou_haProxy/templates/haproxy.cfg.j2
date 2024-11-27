@@ -1,7 +1,7 @@
 global
     maxconn 20000
-    ulimit-n  16384
-    log 127.0.0.1 format raw local0 debug
+    ulimit-n 80084
+    log stdout format raw local0 debug
     daemon
 
 frontend stats
@@ -13,32 +13,37 @@ frontend stats
     stats admin if TRUE
 
 frontend fe_http
+    log global
     bind *:8404
     mode http
-    log global
     option httplog
-    option dontlognull
     option nolinger
     maxconn 8000
     timeout client 30s
 
-    acl is_grafana hdr(host) -i grafana.local
+
+    acl is_grafana hdr_reg(host) -i ^grafana\.local(:8404)?$
     use_backend grafana if is_grafana
 
-    acl is_prometheus hdr(host) -i prometheus.local
+    acl is_prometheus hdr_reg(host) -i ^prometheus\.local(:8404)?$
     use_backend prometheus if is_prometheus
 
 backend grafana
+    log global
     mode http
     timeout client 30s       # Timeout for client-side
     timeout connect 5s       # Timeout for establishing connection
     timeout server 30s       # Timeout for server-side
     balance roundrobin
+    option httplog
     option httpchk
+    option forwardfor
     server grafana1 {{ grafana_ip }}:3000 check
 
 backend prometheus
+    log global 
     mode http
+    option httplog
     timeout client 30s       # Timeout for client-side
     timeout connect 5s       # Timeout for establishing connection
     timeout server 30s       # Timeout for server-side
