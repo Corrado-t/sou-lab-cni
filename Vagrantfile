@@ -5,12 +5,16 @@ require 'getoptlong'
 # Define command-line options
 opts = GetoptLong.new(
   [ '--fe-node-number', GetoptLong::OPTIONAL_ARGUMENT ],
-  [ '--be-node-number', GetoptLong::OPTIONAL_ARGUMENT ]
+  [ '--be-node-number', GetoptLong::OPTIONAL_ARGUMENT ],
+  [ '--https', GetoptLong::OPTIONAL_ARGUMENT ]
 )
 
 # Default node number
 feNodeNumber = 1
 beNodeNumber = 1
+
+# Default https
+https = "true"
 
 opts.ordering = GetoptLong::REQUIRE_ORDER   
 
@@ -21,18 +25,22 @@ opts.each do |opt, arg|
       feNodeNumber = arg.to_i
     when '--be-node-number'
       beNodeNumber = arg.to_i
+    when '--https'
+      https = (arg.downcase == 'true')  
   end
 end
 
 # Vagrant configuration
 Vagrant.configure("2") do |config|
   config.vm.box = "generic/oracle8"
-  
+
   # Create multiple frontEnd VMs based on nodeNumber
   (1..feNodeNumber).each do |i|
     config.vm.define "soufe#{i}" do |node|
       node.vm.network "private_network", ip: "192.168.56.#{i + 1}"
+      puts "Provisioning node soufe#{i} with use_https=#{https}"
       config.vm.provision "ansible" do |ansible|
+        ansible.extra_vars = { use_https: https }
         ansible.playbook = "./deploy.yml"
         ansible.compatibility_mode = "2.0"
         ansible.become = true
@@ -50,7 +58,8 @@ Vagrant.configure("2") do |config|
     config.vm.define "soube#{i}" do |node|
       node.vm.network "private_network", ip: "192.168.56.#{i + 65}"
       config.vm.provision "ansible" do |ansible|
-        ansible.playbook = "./deploy.yml"
+        ansible.extra_vars = { use_https: https }
+        ansible.playbook = "./deploy.yml" 
         ansible.compatibility_mode = "2.0"
         ansible.become = true
       end

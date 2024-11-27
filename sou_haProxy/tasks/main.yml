@@ -22,4 +22,3 @@
     volumes:
       - /tmp/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:Z  # Mount the config file
       - /tmp/haproxy.pem:/usr/local/etc/haproxy/certs/haproxy.pem:Z  # Mount cert
-      - /tmp/haproxy.conf:/etc/rsyslog.d/haproxy.conf 

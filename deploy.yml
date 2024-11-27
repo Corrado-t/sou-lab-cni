@@ -1,3 +1,11 @@
+- name: Debug use_https variable
+  hosts: soufe1
+  become: yes
+  tasks:
+    - name: debug variable
+      debug:
+        msg: "System {{ use_https }}"
+
 - name: Configure soufe and soube nodes
   hosts: all
   become: yes
