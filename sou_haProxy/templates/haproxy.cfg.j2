@@ -14,7 +14,7 @@ frontend stats
 
 frontend fe_http
     log global
-    bind *:8404
+    bind *:8443 ssl crt /usr/local/etc/haproxy/certs/haproxy.pem
     mode http
     option httplog
     option nolinger
@@ -22,10 +22,10 @@ frontend fe_http
     timeout client 30s
 
 
-    acl is_grafana hdr_reg(host) -i ^grafana\.local(:8404)?$
+    acl is_grafana hdr_reg(host) -i ^grafana\.sou\.local(:8443)?$
     use_backend grafana if is_grafana
 
-    acl is_prometheus hdr_reg(host) -i ^prometheus\.local(:8404)?$
+    acl is_prometheus hdr_reg(host) -i ^prometheus\.sou\.local(:8443)?$
     use_backend prometheus if is_prometheus
 
 backend grafana

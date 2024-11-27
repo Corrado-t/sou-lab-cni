@@ -62,5 +62,6 @@ Grafana: http://grafana.local:8404
 Prometheus: http://prometheus.local:8404
 
 
+curl -v --cacert /Users/corradotiberio/Documents/Project/sou-lab-cni/sou_haProxy/certs/haproxy.crt -H "Host: prometheus.sou.local" https://prometheus.sou.local:8443
 
-
+curl -v --cacert /Users/corradotiberio/Documents/Project/sou-lab-cni/sou_haProxy/certs/haproxy.crt -H "Host: grafana.sou.local" https://grafana.sou.local:8443
