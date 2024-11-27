@@ -18,6 +18,20 @@ The setup includes SSL configuration, HaProxy stats, and a variable number of ba
 By default vagrant will launch 1 vm frontend(HaProxy) and 1 vm backend(grafana and prometheus).
 To launch the default setting follow the guidelines below.
 
+### Create self signed certificate
+
+Ansible during the installation will go to search for the certs in sou_haProxy/certs/
+To create the certificate run this commands:
+
+```bash
+cd sou-lab-cni/sou_haProxy/
+mkdir certs
+openssl genrsa -out haproxy.key 2048
+openssl req -new -key haproxy.key -out haproxy.csr -subj "/C=US/ST=State/L=City/O=Organization/OU=Department/CN=*.sou.local"
+openssl x509 -req -in haproxy.csr -signkey haproxy.key -out haproxy.crt -days 365
+cat haproxy.key haproxy.crt > haproxy.pem
+```
+
 ### Launch
 Ansible needs to be version <2.17 in order to work correctly with the VagrantBox generic/oracle8 and a podman collection to use the Roles in the project.
 So to launch the environment is suggested to use a Python Venv to correctly set the ansible version.

@@ -4,6 +4,11 @@
 # Editor swapfiles
 .*.sw?
 *~
+# certs
+*.crt
+*.pem
+*.key
+*.csr
 
 # Vagrant stuff
 acceptance_config.yml
