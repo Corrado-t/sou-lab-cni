@@ -34,17 +34,25 @@ end
 Vagrant.configure("2") do |config|
   config.vm.box = "generic/oracle8"
 
+  ansible_inventory = {
+    "soufe" => [],
+    "soube" => []
+  }
+
   # Create multiple frontEnd VMs based on nodeNumber
   (1..feNodeNumber).each do |i|
     config.vm.define "soufe#{i}" do |node|
       node.vm.network "private_network", ip: "192.168.56.#{i + 1}"
       puts "Provisioning node soufe#{i} with use_https=#{https}"
+      ansible_inventory["soufe"] << "soufe#{i}"
       config.vm.provision "ansible" do |ansible|
-        ansible.extra_vars = { use_https: https }
+        ansible.extra_vars = { use_https: https, backend_count: beNodeNumber }
         ansible.playbook = "./deploy.yml"
+        ansible.groups = ansible_inventory
         ansible.compatibility_mode = "2.0"
         ansible.become = true
       end
+
       node.vm.provider "virtualbox" do |vb|
         vb.memory = "512"
         vb.cpus = 1
@@ -53,16 +61,20 @@ Vagrant.configure("2") do |config|
     end
   end
 
-   # Create multiple backEnd VMs based on nodeNumber
+  puts "Provisioning #{beNodeNumber} backend node"
+  # Create multiple backEnd VMs based on nodeNumber
   (1..beNodeNumber).each do |i|
     config.vm.define "soube#{i}" do |node|
       node.vm.network "private_network", ip: "192.168.56.#{i + 65}"
+      ansible_inventory["soube"] << "soube#{i}"
       config.vm.provision "ansible" do |ansible|
-        ansible.extra_vars = { use_https: https }
+        ansible.extra_vars = { use_https: https, backend_count: beNodeNumber }
         ansible.playbook = "./deploy.yml" 
+        ansible.groups = ansible_inventory
         ansible.compatibility_mode = "2.0"
         ansible.become = true
       end
+
       node.vm.provider "virtualbox" do |vb|
         vb.memory = "512"
         vb.cpus = 1

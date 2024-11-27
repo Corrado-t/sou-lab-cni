@@ -1,31 +1,31 @@
 - name: Debug use_https variable
-  hosts: soufe1
+  hosts: soufe
   become: yes
   tasks:
     - name: debug variable
       debug:
         msg: "System {{ use_https }}"
 
-- name: Configure soufe and soube nodes
+- name: Configure podman on soufe and soube nodes
   hosts: all
   become: yes
   roles:
     - sou_podman
 
 - name: Configure HaProxy on soufe
-  hosts: soufe1
+  hosts: soufe
   become: yes
   roles: 
     - sou_haProxy
 
 - name: Configure Prometeus on soube
-  hosts: soube1
+  hosts: soube
   become: yes
   roles:
     - sou_prometheus
 
 - name: Configure Grafana on soube
-  hosts: soube1
+  hosts: soube
   become: yes
   roles:
     - sou_grafana
